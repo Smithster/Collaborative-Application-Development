@@ -2,9 +2,13 @@ import time
 import pandas as pd
 from matplotlib import pyplot as plt
 
+import seaborn as sns
+import numpy as np
+
+
 
 #Limiting variables for results
-maxGraphs = 10
+maxGraphs = 2
 
 #Change filter conditions for events
 def getFilter(event):
@@ -20,15 +24,19 @@ print("Starting...")
 graphCount = 0
 
 #Create the dataframe from CSV file
-data = pd.DataFrame(data=pd.read_csv("CSC40038 Data\ORG01-01082021-31072022.csv"))
+data = pd.DataFrame(data=pd.read_csv("ORG01-01082021-31072022.csv"))
+data.drop_duplicates(inplace=True)
 data['StatusCreatedDate'] = pd.to_datetime(data['StatusCreatedDate'])
+#Organise the data by the dateimte value of each order
 data = data.sort_values('StatusCreatedDate')
 #Making a list of events with event names
-events = data[['EventName', 'EventId']]
+events = data[['EventName', 'EventId', 'EventType']]
 events = events.groupby('EventId').first()
-
+#Making list of event type Ids
+eventTypes = data.EventType.unique()
+eventTypes = pd.Series(eventTypes)
 #Data alterations (dropping/altering columns)
-data = data.drop(['EventType','BookingReference','AttendeeReference','IsLeadAttendee','AttendeeGrossCost','EventName'], axis=1)
+data = data.drop(['BookingReference','AttendeeReference','IsLeadAttendee','AttendeeGrossCost','EventName'], axis=1)
 
 endTime = time.time()
 processingTime = endTime - startTime 
@@ -94,5 +102,22 @@ def getEventData(event):
 
     return eventData
 
+def getEventTypeDTime():
+    for eventType in eventTypes:
+        eventTypeData = data[data.EventType == eventType]
+        eventTypeData = eventTypeData[['EventId', 'GroupSize', 'StatusCreatedDate']]
+        x = []
+        y = []
+        for eventId in eventTypeData['EventId'].unique():
+            eventData = eventTypeData[eventTypeData.EventId == eventId].sort_values('StatusCreatedDate')
+            startTime = eventData['StatusCreatedDate'].iloc[0]
+            endTime = eventData['StatusCreatedDate'].iloc[-1]
+            dTime = (endTime - startTime).days
+            bookings = eventData.GroupSize.sum()
+            x.append(dTime)
+            y.append(bookings)
+        giveGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
+
 #giveTDeltaBookings()
-giveEventWeekly()
+#giveEventWeekly()
+getEventTypeDTime()
