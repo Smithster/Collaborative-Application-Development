@@ -1,14 +1,12 @@
 import time
 import pandas as pd
 from matplotlib import pyplot as plt
-
-import seaborn as sns
-import numpy as np
-
-
+import sqlite3
+import dataProcessing
 
 #Limiting variables for results
 maxGraphs = 2
+data = 'data2'
 
 #Change filter conditions for events
 def getFilter(event):
@@ -22,11 +20,13 @@ print("Starting...")
 
 #Variables for storage
 graphCount = 0
-
-#Create the dataframe from CSV file
-data = pd.DataFrame(data=pd.read_csv("ORG01-01082021-31072022.csv"))
-data.drop_duplicates(inplace=True)
-data['StatusCreatedDate'] = pd.to_datetime(data['StatusCreatedDate'])
+try:
+    con = sqlite3.connect('database.db')
+except:
+    dataProcessing.initDatabase()
+    con = sqlite3.connet('database.db')
+ 
+data = dataProcessing.getTable()
 #Organise the data by the dateimte value of each order
 data = data.sort_values('StatusCreatedDate')
 #Making a list of events with event names
@@ -120,4 +120,4 @@ def getEventTypeDTime():
 
 #giveTDeltaBookings()
 #giveEventWeekly()
-getEventTypeDTime()
+#getEventTypeDTime()
