@@ -1,9 +1,5 @@
-const {spawn} = require('child_process')
-
-const getGraph = ((filters) => {
-  filters.forEach(filter => {
-    if (filters[filter] == true){
-
-    };
+const test = () => {
+  fetch("127.0.0.1:7777/data/analysis.py", {
+    
   });
-});
+};

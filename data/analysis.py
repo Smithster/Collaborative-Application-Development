@@ -1,8 +1,11 @@
 import time
 import pandas as pd
+from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib import pyplot as plt
 import sqlite3
 import dataProcessing
+from flask import Flask, Response
+import io
 
 #Limiting variables for results
 maxGraphs = 2
@@ -62,11 +65,13 @@ def giveGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     if graphCount > maxGraphs:
         return
     for data in dataList:
-        plt.plot(dataList[data][0], dataList[data][1], label = data, marker=markers, ls=lineStyle)
-    plt.suptitle(title)
-    plt.legend()
-    plt.show()
+        fig, ax = plt.subplots()
+        ax.plot(dataList[data][0], dataList[data][1], label = data, marker=markers, ls=lineStyle)
+    ax.suptitle(title)
+    ax.legend()
     graphCount += 1
+    return ax
+    
 
 def giveTDeltaBookings():
     diffList = []
@@ -115,8 +120,26 @@ def getEventTypeDTime():
             bookings = eventData.GroupSize.sum()
             x.append(dTime)
             y.append(bookings)
-        giveGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
+        return giveGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
 
 #giveTDeltaBookings()
 #giveEventWeekly()
 #getEventTypeDTime()
+
+
+app = Flask(__name__)
+
+def convertFigure(graph):
+    output = io.BytesIO()
+    FigureCanvasAgg(graph).print_png(output)
+    return Response(output.getvalue(), 'image/png')
+
+@app.route('/eventWeekly')
+def eventWeekly():
+    fig = giveEventWeekly()
+    return convertFigure(fig)
+
+@app.route('/')
+def DTBookings():
+    fig = giveTDeltaBookings()
+    return giveTDeltaBookins(fig)
