@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <h1>This is a web page</h1>
+        <script src="/graphFunctions.js"></script>
+        <script>
+            const test = () => {
+                fetch("/DTBookings").then((img) => {
+                img = new Blob([img], "image/png")
+                
+                });
+            };
+        </script>
+    </head>
+    <body>
+        <input type="button" id="1" onclick="test()">Test button
+        <img id="graph" src="">
+    </body>
+</html>

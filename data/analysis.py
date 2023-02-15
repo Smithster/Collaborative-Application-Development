@@ -1,15 +1,13 @@
 import time
 import pandas as pd
-from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib import pyplot as plt
 import sqlite3
+# import data.dataProcessing as dataProcessing
 import dataProcessing
-from flask import Flask, Response
-import io
 
 #Limiting variables for results
 maxGraphs = 2
-data = 'data3'
+data = 'data1'
 
 #Change filter conditions for events
 def getFilter(event):
@@ -67,10 +65,10 @@ def giveGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     for data in dataList:
         fig, ax = plt.subplots()
         ax.plot(dataList[data][0], dataList[data][1], label = data, marker=markers, ls=lineStyle)
-    ax.suptitle(title)
+    ax.set_title(title)
     ax.legend()
     graphCount += 1
-    return ax
+    return plt
     
 
 def giveTDeltaBookings():
@@ -81,7 +79,7 @@ def giveTDeltaBookings():
         diffList, bookingList = giveEventTDBookings(event, diffList, bookingList)
 
     #Produce a plot of the events bookings with respect to how long the event had bookings
-    giveGraphs(dataList={'Bookings': [diffList, bookingList]})
+    return giveGraphs(dataList={'Bookings': [diffList, bookingList]})
 
 
 def giveEventTDBookings(event, diffList, bookingList):
@@ -91,7 +89,7 @@ def giveEventTDBookings(event, diffList, bookingList):
     lastSaleDate = event.StatusCreatedDate.iloc[-1]
 
     #Finds the difference in datetime of the first and last booking
-    dateDiff = lastSaleDate - firstSaleDate
+    dateDiff = pd.to_datetime(lastSaleDate) - pd.to_datetime(firstSaleDate)
 
     #Append to the list of data points for the event
     diffList.append(dateDiff.days)
@@ -122,24 +120,7 @@ def getEventTypeDTime():
             y.append(bookings)
         return giveGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
 
-#giveTDeltaBookings()
+giveTDeltaBookings()
+
 #giveEventWeekly()
 #getEventTypeDTime()
-
-
-app = Flask(__name__)
-
-def convertFigure(graph):
-    output = io.BytesIO()
-    FigureCanvasAgg(graph).print_png(output)
-    return Response(output.getvalue(), 'image/png')
-
-@app.route('/eventWeekly')
-def eventWeekly():
-    fig = giveEventWeekly()
-    return convertFigure(fig)
-
-@app.route('/')
-def DTBookings():
-    fig = giveTDeltaBookings()
-    return giveTDeltaBookins(fig)
