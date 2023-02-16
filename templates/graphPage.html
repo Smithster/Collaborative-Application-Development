@@ -4,15 +4,32 @@
         <script src="/graphFunctions.js"></script>
         <script>
             const test = () => {
-                fetch("/DTBookings").then((img) => {
-                img = new Blob([img], "image/png")
-                
+                fetch("/DTBookings")
+                .then(response => response.blob())
+                .then(imgBlob => {
+                    const imageUrl = URL.createObjectURL(imgBlob);
+                    thing = document.createElement("div");
+                    thing.innerHTML = imageUrl
+                    document.body.appendChild(thing)
+                    graph = document.createElement("img")
+                    graph.src = imageUrl
+                    document.body.appendChild(graph)
                 });
             };
+
+            const test2 = () => {
+                fetch('/test')
+                .then(response => response.text())
+                .then(text => {
+                    testDiv = document.createElement('div');
+                    testDiv.innerHTML = text;
+                    document.body.appendChild(testDiv);
+                })
+            }
         </script>
     </head>
     <body>
-        <input type="button" id="1" onclick="test()">Test button
-        <img id="graph" src="">
+        <input type="button" id="1" onclick="test2()">
+        <input type="button" id="2" onclick="test()">
     </body>
 </html>

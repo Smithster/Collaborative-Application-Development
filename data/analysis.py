@@ -3,7 +3,7 @@ import pandas as pd
 from matplotlib import pyplot as plt
 import sqlite3
 # import data.dataProcessing as dataProcessing
-import dataProcessing
+import data.dataProcessing as dataProcessing
 
 #Limiting variables for results
 maxGraphs = 2
@@ -68,7 +68,8 @@ def giveGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     ax.set_title(title)
     ax.legend()
     graphCount += 1
-    return plt
+    print("this is a test")
+    return fig
     
 
 def giveTDeltaBookings():
@@ -120,7 +121,6 @@ def getEventTypeDTime():
             y.append(bookings)
         return giveGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
 
-giveTDeltaBookings()
-
+#giveTDeltaBookings()
 #giveEventWeekly()
 #getEventTypeDTime()

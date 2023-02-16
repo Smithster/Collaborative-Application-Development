@@ -1,9 +1,10 @@
-import flask
+from flask import Flask, Response, render_template
 import io
 from matplotlib.backends.backend_agg import FigureCanvasAgg
+from matplotlib import pyplot as plt
 import data.analysis as analysis
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 
 def convertFigure(graph):
     output = io.BytesIO()
@@ -12,7 +13,7 @@ def convertFigure(graph):
 
 @app.route('/')
 def index():
-  return flask.render_template('graphPage.html') 
+  return render_template('graphPage.html') 
 
 @app.route('/eventWeekly')
 def eventWeekly():
@@ -23,4 +24,8 @@ def eventWeekly():
 def DTBookings():
     fig = analysis.giveTDeltaBookings()
     print('Sending graph...')
-    return giveTDeltaBookins(fig)
+    return convertFigure(fig)
+
+@app.route('/test')
+def test():
+    return Response('this is a test')
