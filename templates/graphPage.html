@@ -1,35 +1,15 @@
 <html>
     <head>
-        <h1>This is a web page</h1>
-        <script src="/graphFunctions.js"></script>
-        <script>
-            const test = () => {
-                fetch("/DTBookings")
-                .then(response => response.blob())
-                .then(imgBlob => {
-                    const imageUrl = URL.createObjectURL(imgBlob);
-                    thing = document.createElement("div");
-                    thing.innerHTML = imageUrl
-                    document.body.appendChild(thing)
-                    graph = document.createElement("img")
-                    graph.src = imageUrl
-                    document.body.appendChild(graph)
-                });
-            };
-
-            const test2 = () => {
-                fetch('/test')
-                .then(response => response.text())
-                .then(text => {
-                    testDiv = document.createElement('div');
-                    testDiv.innerHTML = text;
-                    document.body.appendChild(testDiv);
-                })
-            }
-        </script>
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
+        <script src="{{url_for('static', filename='graphFunctions.js')}}"></script>
     </head>
     <body>
-        <input type="button" id="1" onclick="test2()">
-        <input type="button" id="2" onclick="test()">
+        <input type="text" id="eventType">
+        <input type="text" id="startDate">
+        <input type="text" id="fromDate">
+        <input type="text" id="bookingStart">
+        <input type="text" id="bookings"> 
+        <input type="button" id="getPredictionButton" onclick="test()">
+        <img Id="graph" src="">
     </body>
 </html>

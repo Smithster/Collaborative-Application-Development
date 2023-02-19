@@ -1,9 +1,11 @@
 import time
 import pandas as pd
-from matplotlib import pyplot as plt
-import sqlite3
-# import data.dataProcessing as dataProcessing
+from matplotlib.figure import Figure
+from matplotlib.axes import Axes
+# import dataProcessing
 import data.dataProcessing as dataProcessing
+from sklearn import ARIMA
+import xgboost as xgb
 
 #Limiting variables for results
 maxGraphs = 2
@@ -43,7 +45,7 @@ endTime = time.time()
 processingTime = endTime - startTime
 print("Preprocessing Data Complete! Time Taken: " + str(processingTime) + " seconds.")
 
-def giveEventWeekly():
+def getEventWeekly():
     for eventId in events.index:
         event = data[data.EventId == eventId]
         #Decides if the event should be plotted or ignored
@@ -55,15 +57,16 @@ def giveEventWeekly():
         x, y, y2 = event.index, event.GroupSize, event.GroupSize.cumsum()
         graph1Args = [x, y]
         graph2Args = [x, y2]
-        giveGraphs(dataList={'Week Sales': graph1Args, 'Cumulative Sales': graph2Args}, \
+        getGraphs(dataList={'Week Sales': graph1Args, 'Cumulative Sales': graph2Args}, \
             title=events.at[eventId, 'EventName'])
 
-def giveGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
+def getGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     global graphCount
     if graphCount > maxGraphs:
         return
+    fig = Figure()
     for data in dataList:
-        fig, ax = plt.subplots()
+        ax = fig.add_axes([0.1, 0.1, 0.8, 0.8])
         ax.plot(dataList[data][0], dataList[data][1], label = data, marker=markers, ls=lineStyle)
     ax.set_title(title)
     ax.legend()
@@ -72,18 +75,18 @@ def giveGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     return fig
     
 
-def giveTDeltaBookings():
+def getTDeltaBookings():
     diffList = []
     bookingList= []
     for eventId in events.index:
         event = getEventData(eventId)
-        diffList, bookingList = giveEventTDBookings(event, diffList, bookingList)
+        diffList, bookingList = getEventTDBookings(event, diffList, bookingList)
 
     #Produce a plot of the events bookings with respect to how long the event had bookings
-    return giveGraphs(dataList={'Bookings': [diffList, bookingList]})
+    return getGraphs(dataList={'Bookings': [diffList, bookingList]})
 
 
-def giveEventTDBookings(event, diffList, bookingList):
+def getEventTDBookings(event, diffList, bookingList):
 
     #Sets the datetime of the first booking and last booking
     firstSaleDate = event.StatusCreatedDate.iloc[0]
@@ -119,8 +122,23 @@ def getEventTypeDTime():
             bookings = eventData.GroupSize.sum()
             x.append(dTime)
             y.append(bookings)
-        return giveGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
+        return getGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
 
-#giveTDeltaBookings()
-#giveEventWeekly()
-#getEventTypeDTime()
+
+
+def predictBookings(dateRange, season = '', promotionDates = [], eventType = ''):
+    if (dateRange[-1] - dateRange[0]).days() > 60:
+        timeScale = 'W'
+    timeTrendGrad = getAvgTrend()
+    y = []
+    for x in dateRange:
+        
+
+def getPrediction(period):
+
+    mod = xgb.XGBRegressor
+    mod.fit(getTrainData(constraints))
+    mod.predict()
+    x = pd.period_range(period)
+    y = predictBookings(x)
+    return getGraphs(dataList = {'Bookings' : [x, y]}, title = 'Predicted Bookings', lineStyle = '-', markers = '')

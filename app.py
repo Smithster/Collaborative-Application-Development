@@ -1,5 +1,6 @@
 from flask import Flask, Response, render_template
 import io
+import json
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib import pyplot as plt
 import data.analysis as analysis
@@ -17,15 +18,16 @@ def index():
 
 @app.route('/eventWeekly')
 def eventWeekly():
-    fig = analysis.giveEventWeekly()
+    fig = analysis.getEventWeekly()
     return convertFigure(fig)
 
 @app.route('/DTBookings')
 def DTBookings():
-    fig = analysis.giveTDeltaBookings()
+    fig = analysis.getTDeltaBookings()
     print('Sending graph...')
     return convertFigure(fig)
 
-@app.route('/test')
-def test():
-    return Response('this is a test')
+@app.route('/prediction/<constraints>')
+def getPrediction(constraints):
+    fig = analysis.getPrediction(constraints)
+    return convertFigure(fig)

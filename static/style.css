@@ -1,0 +1,11 @@
+body{
+  display: flex;
+  justify-self: center;
+  align-content: center;
+
+}
+
+#graph{
+  display: flex;
+  justify-self: center;
+}
