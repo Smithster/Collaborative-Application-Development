@@ -4,8 +4,6 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 # import dataProcessing
 import data.dataProcessing as dataProcessing
-from sklearn import ARIMA
-import xgboost as xgb
 
 #Limiting variables for results
 maxGraphs = 2
@@ -124,21 +122,20 @@ def getEventTypeDTime():
             y.append(bookings)
         return getGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
 
-
-
-def predictBookings(dateRange, season = '', promotionDates = [], eventType = ''):
-    if (dateRange[-1] - dateRange[0]).days() > 60:
-        timeScale = 'W'
-    timeTrendGrad = getAvgTrend()
-    y = []
-    for x in dateRange:
+# def predictBookings(dateRange, season = '', promotionDates = [], eventType = ''):
+#     if (dateRange[-1] - dateRange[0]).days() > 60:
+#         timeScale = 'W'
+#     timeTrendGrad = getAvgTrend()
+#     y = []
+#     for x in dateRange:
         
 
-def getPrediction(period):
-
+def getPrediction():
+    
     mod = xgb.XGBRegressor
-    mod.fit(getTrainData(constraints))
+    mod.fit(getTrainData(data))
     mod.predict()
     x = pd.period_range(period)
     y = predictBookings(x)
     return getGraphs(dataList = {'Bookings' : [x, y]}, title = 'Predicted Bookings', lineStyle = '-', markers = '')
+

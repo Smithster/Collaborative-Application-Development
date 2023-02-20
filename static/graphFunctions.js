@@ -1,7 +1,7 @@
 const test = () => {
   bookings = document.getElementById('bookings').value
   startDate = document.getElementById('startDate').value
-  bookingOpen = document.getElementById('bookingStart').value
+  bookingStart = document.getElementById('bookingStart').value
   fromDate = document.getElementById('fromDate').value
   eventType = document.getElementById('eventType').value
 
