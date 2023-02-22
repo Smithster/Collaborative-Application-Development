@@ -4,6 +4,7 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 # import dataProcessing
 import data.dataProcessing as dataProcessing
+import xgboost as xgb
 
 #Limiting variables for results
 maxGraphs = 2
@@ -43,20 +44,20 @@ endTime = time.time()
 processingTime = endTime - startTime
 print("Preprocessing Data Complete! Time Taken: " + str(processingTime) + " seconds.")
 
-def getEventWeekly():
-    for eventId in events.index:
-        event = data[data.EventId == eventId]
-        #Decides if the event should be plotted or ignored
-        if not getFilter(event):
-            continue
-        #Resample the data into weekly groups
-        event = event.resample('W', on='StatusCreatedDate').sum(numeric_only=True)
-        #Graphs for weekly results
-        x, y, y2 = event.index, event.GroupSize, event.GroupSize.cumsum()
-        graph1Args = [x, y]
-        graph2Args = [x, y2]
-        getGraphs(dataList={'Week Sales': graph1Args, 'Cumulative Sales': graph2Args}, \
-            title=events.at[eventId, 'EventName'])
+# def getEventWeekly():
+#     for eventId in events.index:
+#         event = data[data.EventId == eventId]
+#         #Decides if the event should be plotted or ignored
+#         if not getFilter(event):
+#             continue
+#         #Resample the data into weekly groups
+#         event = event.resample('W', on='StatusCreatedDate').sum(numeric_only=True)
+#         #Graphs for weekly results
+#         x, y, y2 = event.index, event.GroupSize, event.GroupSize.cumsum()
+#         graph1Args = [x, y]
+#         graph2Args = [x, y2]
+#         getGraphs(dataList={'Week Sales': graph1Args, 'Cumulative Sales': graph2Args}, \
+#             title=events.at[eventId, 'EventName'])
 
 def getGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     global graphCount
@@ -73,69 +74,87 @@ def getGraphs(dataList = {}, title = '', markers = '.', lineStyle = ''):
     return fig
     
 
-def getTDeltaBookings():
-    diffList = []
-    bookingList= []
-    for eventId in events.index:
-        event = getEventData(eventId)
-        diffList, bookingList = getEventTDBookings(event, diffList, bookingList)
+# def getTDeltaBookings():
+#     diffList = []
+#     bookingList= []
+#     for eventId in events.index:
+#         event = getEventData(eventId)
+#         diffList, bookingList = getEventTDBookings(event, diffList, bookingList)
 
-    #Produce a plot of the events bookings with respect to how long the event had bookings
-    return getGraphs(dataList={'Bookings': [diffList, bookingList]})
+#     #Produce a plot of the events bookings with respect to how long the event had bookings
+#     return getGraphs(dataList={'Bookings': [diffList, bookingList]})
 
 
-def getEventTDBookings(event, diffList, bookingList):
+# def getEventTDBookings(event, diffList, bookingList):
 
-    #Sets the datetime of the first booking and last booking
-    firstSaleDate = event.StatusCreatedDate.iloc[0]
-    lastSaleDate = event.StatusCreatedDate.iloc[-1]
+#     #Sets the datetime of the first booking and last booking
+#     firstSaleDate = event.StatusCreatedDate.iloc[0]
+#     lastSaleDate = event.StatusCreatedDate.iloc[-1]
 
-    #Finds the difference in datetime of the first and last booking
-    dateDiff = pd.to_datetime(lastSaleDate) - pd.to_datetime(firstSaleDate)
+#     #Finds the difference in datetime of the first and last booking
+#     dateDiff = pd.to_datetime(lastSaleDate) - pd.to_datetime(firstSaleDate)
 
-    #Append to the list of data points for the event
-    diffList.append(dateDiff.days)
-    bookingList.append(event.GroupSize.sum())
+#     #Append to the list of data points for the event
+#     diffList.append(dateDiff.days)
+#     bookingList.append(event.GroupSize.sum())
 
-    return diffList, bookingList
+#     return diffList, bookingList
 
-def getEventData(event):
+# def getEventData(event):
 
-    #Select event from event data
-    eventData = data[data.EventId == event]
+#     #Select event from event data
+#     eventData = data[data.EventId == event]
 
-    return eventData
+#     return eventData
 
-def getEventTypeDTime():
-    for eventType in eventTypes:
-        eventTypeData = data[data.EventType == eventType]
-        eventTypeData = eventTypeData[['EventId', 'GroupSize', 'StatusCreatedDate']]
-        x = []
-        y = []
-        for eventId in eventTypeData['EventId'].unique():
-            eventData = eventTypeData[eventTypeData.EventId == eventId].sort_values('StatusCreatedDate')
-            startTime = eventData['StatusCreatedDate'].iloc[0]
-            endTime = eventData['StatusCreatedDate'].iloc[-1]
-            dTime = (endTime - startTime).days
-            bookings = eventData.GroupSize.sum()
-            x.append(dTime)
-            y.append(bookings)
-        return getGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings')
+# def getEventTypeDTime():
+#     for eventType in eventTypes:
+#         eventTypeData = data[data.EventType == eventType]
+#         eventTypeData = eventTypeData[['EventId', 'GroupSize', 'StatusCreatedDate']]
+#         x = []
+#         y = []
+#         for eventId in eventTypeData['EventId'].unique():
+#             eventData = eventTypeData[eventTypeData.EventId == eventId].sort_values('StatusCreatedDate')
+#             startTime = eventData['StatusCreatedDate'].iloc[0]
+#             endTime = eventData['StatusCreatedDate'].iloc[-1]
+#             dTime = (endTime - startTime).days
+#             bookings = eventData.GroupSize.sum()
+#             x.append(dTime)
+#             y.append(bookings)
+#         return getGraphs(dataList = {'Bookings': [x, y]}, lineStyle = '', markers = '.', title = f'{eventType} Delta Time Bookings') 
 
-# def predictBookings(dateRange, season = '', promotionDates = [], eventType = ''):
-#     if (dateRange[-1] - dateRange[0]).days() > 60:
-#         timeScale = 'W'
-#     timeTrendGrad = getAvgTrend()
-#     y = []
-#     for x in dateRange:
-        
+def invalidConstraint(constraints, constraint):
+    if constraints[constraint] in ['', None, 'Null', 'NaN']:
+        return True
+    if constraint == 'bookings':
+        if not constraints['bookings'].isNumeric():
+            return True
+    if constraint in ['startDate', 'bookingStart', 'fromDate']:
+        try:
+            pd.to_datetime(constraints[constraint])
+        except:
+            return True
+    if constraint == 'eventType':
+        if constraints[constraint] not in eventTypes:
+            return True
+    return False
 
-def getPrediction():
-    
+def getTrainData(constraints):
+    trainData = data
+    for constraint in contraints:
+        if invalidConstraint(constraints, constraint):
+            continue
+        trainData = trainData[constraint == constraints[constraint]]
+    return trainData
+
+def getFitData(constraints):
+    x = pd.date_range(constraints['bookingStart'], constraints['fromDate'], freq='1D')
+    y = [val for val in constraints['bookings']/]
+
+def getPrediction(constraints):
     mod = xgb.XGBRegressor
-    mod.fit(getTrainData(data))
-    mod.predict()
-    x = pd.period_range(period)
-    y = predictBookings(x)
+    mod.fit(getTrainData(constraints))
+    mod.predict(getFitData(constraints))
+    
     return getGraphs(dataList = {'Bookings' : [x, y]}, title = 'Predicted Bookings', lineStyle = '-', markers = '')
 

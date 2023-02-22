@@ -21,20 +21,8 @@ def getConstraints():
     constraints = analysis.getHeaders()
     return Response(constraints, 'text/string')
 
-# @app.route('/eventWeekly')
-# def eventWeekly():
-#     fig = analysis.getEventWeekly()
-#     return convertFigure(fig)
-
-# @app.route('/DTBookings')
-# def DTBookings():
-#     fig = analysis.getTDeltaBookings()
-#     print('Sending graph...')
-#     return convertFigure(fig)
-
 @app.route('/prediction/<constraints>')
 def getPrediction(constraints):
     data = json.loads(constraints)
-    print(data, type(data))
     fig = analysis.getPrediction(data)
     return convertFigure(fig)

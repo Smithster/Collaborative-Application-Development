@@ -21,5 +21,7 @@ const test = () => {
       const imageUrl = URL.createObjectURL(imgBlob);
       graph = document.getElementById("graph")
       graph.src = imageUrl
+  }).catch((error) => {
+    console.log(error)
   });
 };
