@@ -4,6 +4,7 @@ import json
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib import pyplot as plt
 import data.analysis as analysis
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -12,6 +13,16 @@ def convertFigure(graph):
     FigureCanvasAgg(graph).print_png(output)
     return Response(output.getvalue(), 'image/png')
 
+def formatConstraints(data):
+    try:
+        data['StartDate'] = pd.to_datetime(data['StartDate'])
+        data['FromDate'] = pd.to_datetime(data['FromDate'])
+        data['StartBookings'] = pd.to_datetime(data['StartDate'])
+        data['GroupSize'] == int(data['GroupSize'])
+    except:
+        print("Invalid Data Type")
+    return data
+    
 @app.route('/')
 def index():
   return render_template('graphPage.html')
@@ -21,8 +32,9 @@ def getConstraints():
     constraints = analysis.getHeaders()
     return Response(constraints, 'text/string')
 
-@app.route('/prediction/<constraints>')
-def getPrediction(constraints):
-    data = json.loads(constraints)
-    fig = analysis.getPrediction(data)
+@app.route('/prediction/<data>')
+def getPrediction(data):
+    constraints = json.loads(data)
+    constraints = formatConstraints(constraints)
+    fig = analysis.getPrediction(constraints)
     return convertFigure(fig)

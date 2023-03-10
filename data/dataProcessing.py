@@ -16,9 +16,7 @@ def initDatabase():
 
     for data in dataList:
         data.drop_duplicates(inplace=True)
-        data['StatusCreatedDate'] = pd.to_datetime(data['StatusCreatedDate'], errors='coerce')
-        data['StartDate'] = pd.to_datetime(data['StartDate'], errors='coerce')
-
+        
     data1.to_sql('data1', con, if_exists = 'replace', index = False)
     data2.to_sql('data2', con, if_exists = 'replace', index = False)
     data3.to_sql('data3', con, if_exists = 'replace', index = False)
@@ -29,7 +27,9 @@ def initDatabase():
 
 def getTable(index = 'data1'):
     con = sqlite3.connect('data/database.db')
-    data = pd.read_sql(f'SELECT * FROM {index}', con)
+    data = pd.read_sql(f'SELECT * FROM {index}', con, index_col=None)
+    data['StatusCreatedDate'] = pd.to_datetime(data['StatusCreatedDate'], errors='coerce')
+    data['StartDate'] = pd.to_datetime(data['StartDate'], errors='coerce')
     return data
 
 

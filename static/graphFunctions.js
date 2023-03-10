@@ -1,26 +1,28 @@
 const test = () => {
-  bookings = document.getElementById('bookings').value
-  startDate = document.getElementById('startDate').value
-  bookingStart = document.getElementById('bookingStart').value
-  fromDate = document.getElementById('fromDate').value
-  eventType = document.getElementById('eventType').value
-
-  if (fromDate == ''){fromDate = new Date()}
+  EventName = document.getElementById('EventName').value
+  GroupSize = document.getElementById('GroupSize').value
+  StartDate = document.getElementById('StartDate').value
+  StartBookings = document.getElementById('StartBookings').value
+  FromDate = document.getElementById('FromDate').value
+  eventType = document.getElementById('EventType').value
+  
+  if (FromDate == ''){FromDate = new Date()}
 
   constraints = {
-    'bookings' : bookings,
-    'startDate' : startDate,
-    'bookingStart' : bookingStart,
-    'fromDate' : fromDate,
-    'eventType' : eventType
+    'EventName' : EventName,
+    'GroupSize' : GroupSize,
+    'StartDate' : StartDate,
+    'StartBookings' : StartBookings,
+    'FromDate' : FromDate,
+    'EventType' : eventType
   }
 
   fetch(`/prediction/${JSON.stringify(constraints)}`)
   .then(response => response.blob())
   .then(imgBlob => {
-      const imageUrl = URL.createObjectURL(imgBlob);
-      graph = document.getElementById("graph")
-      graph.src = imageUrl
+    const imageUrl = URL.createObjectURL(imgBlob);
+    graph = document.getElementById("graph")
+    graph.src = imageUrl
   }).catch((error) => {
     console.log(error)
   });

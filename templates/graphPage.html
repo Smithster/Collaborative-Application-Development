@@ -3,13 +3,21 @@
         <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
         <script src="{{url_for('static', filename='graphFunctions.js')}}"></script>
     </head>
-    <body>
-        <input type="text" id="eventType">
-        <input type="text" id="startDate">
-        <input type="text" id="fromDate">
-        <input type="text" id="bookingStart">
-        <input type="text" id="bookings">
-        <input type="button" id="getPredictionButton" onclick="test()">
+<body>
+        <label class="constraintLab">Event Name</label>
+        <input type="text" class="constraintIn" id="EventName">
+        <label class="constraintLab">Event Type</label>
+        <input type="text" class="constraintIn" id="EventType">
+        <label class="constraintLab">Event Start</label>
+        <input type="date" class="constraintIn" id="StartDate">
+        <label class="constraintLab">Start of Bookings</label>
+        <input type="date" class="constraintIn" id="StartBookings">
+        <label class="constraintLab">From Date (Current Date)</label>
+        <input type="date" class="constraintIn" id="FromDate">
+        <label class="constraintLab">Number of bookings</label>
+        <input type="text" class="constraintIn" id="GroupSize">
+        <button type="button" id="getPredictionButton" onclick="test()">Get Prediction</button>
+        <label class="graphLab">Prediction</label>
         <img Id="graph" src="">
     </body>
 </html>
