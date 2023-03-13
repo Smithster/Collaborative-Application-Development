@@ -136,11 +136,19 @@ def getPrediction(constraints):
 
     print("Making predictions...")
     y = mod.predict(testx)
-    print(y)
+
+    groupSizePrediction = []
+    cumulativePrediction = []
+
+    for pair in y:
+        groupSizePrediction.append(pair[0])
+        cumulativePrediction.append(pair[1])
+    
+    # print(y)
     endTime = time.time()
     print(f'Done! Time taken was {endTime - startTime} seconds.')
 
-    return getGraphs(dataList = {'Predicted Bookings' : [x, y['GroupSize']], 'Predicted Cumulative' : [x, y['Cumulative']]}, title = constraints['EventName'], lineStyle = '-', markers = '')
+    return getGraphs(dataList = {'Predicted Bookings' : [x, groupSizePrediction], 'Predicted Cumulative' : [x, cumulativePrediction]}, title = constraints['EventName'], lineStyle = '-', markers = '')
 
 def invalidConstraint(constraints, constraint):
     if constraints[constraint] in ['', None, 'Null', 'NaN']:
