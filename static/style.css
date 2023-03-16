@@ -1,28 +1,66 @@
-body{
-  display: flex;
-  flex-direction: column;
+body {
+  background-color: #f7f7f7;
 }
 
-.constraintIn{
-  align-self: center;
-  width: 100px;
-  height: 10px;
+.container {
+  margin: 20px auto;
+  max-width: 500px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+  padding: 20px;
+}
+
+.constraintLab {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #444;
+}
+
+.constraintIn {
+  display: block;
+  width: 100%;
   padding: 10px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  appearance: none; /* hide default dropdown arrow */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 9l4 4 4-4z"/></svg>') no-repeat; /* add custom arrow */
+  background-size: 16px; /* size custom arrow */
+  background-position: right 10px center; /* position custom arrow */
 }
 
-.constraintLab{
-  align-self: center;
-  width: 100px;
+/* style the options */
+option {
+  color: #444;
+  background-color: #fff;
+}
+
+#getPredictionButton {
+  display: block;
+  width: 100%;
   padding: 10px;
+  border-radius: 5px;
+  border: none;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  background-color: #007bff; /* change background color to blue */
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-#graph{
-  display: flex;
-  justify-self: center;
-}
-
-#getPredictionButton{
-  align-self: center;
-  width: 100px;
-  padding: 10px;
+#graph {
+  display: block;
+  width: 100%;
+  max-width: 500px; /* set a maximum width */
+  margin-bottom: 20px;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0,0,0,0.3);
+  background-color: #fff;
 }

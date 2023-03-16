@@ -1,0 +1,28 @@
+body{
+  display: flex;
+  flex-direction: column;
+}
+
+.constraintIn{
+  align-self: center;
+  width: 100px;
+  height: 10px;
+  padding: 10px;
+}
+
+.constraintLab{
+  align-self: center;
+  width: 100px;
+  padding: 10px;
+}
+
+#graph{
+  display: flex;
+  justify-self: center;
+}
+
+#getPredictionButton{
+  align-self: center;
+  width: 100px;
+  padding: 10px;
+}

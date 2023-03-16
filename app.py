@@ -25,7 +25,7 @@ def formatConstraints(data):
     
 @app.route('/')
 def index():
-  return render_template('graphPage.html')
+  return render_template('graph.html')
 
 @app.route('/getConstraints')
 def getConstraints():
