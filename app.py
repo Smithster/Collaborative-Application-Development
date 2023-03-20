@@ -38,3 +38,9 @@ def getPrediction(data):
     constraints = formatConstraints(constraints)
     fig = analysis.getPrediction(constraints)
     return convertFigure(fig)
+
+@app.route('/getEventTypes')
+def getEventTypes():
+    eventTypes = analysis.getEventTypes()
+    eventTypes = json.dumps(eventTypes)
+    return Response(eventTypes, 'application/json')

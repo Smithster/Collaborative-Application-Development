@@ -3,24 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <title>My Form</title>
-  <link rel="stylesheet" href="file:///C:/Users/raymo/Desktop/CAD3/style.css">
+  <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}">
   <script src="{{url_for('static', filename='graphFunctions.js')}}"></script>
 </head>
 
 <body>
   <div class="container">
     <label class="constraintLab">Event Name</label>
-    <select class="constraintIn" id="EventName">
-      <option value="option1">Option 1</option>
-      <option value="option2">Option 2</option>
-      <option value="option3">Option 3</option>
-    </select>
+    <input type="text" class="constraintIn" id="EventName">
 
     <label class="constraintLab">Event Type</label>
     <select class="constraintIn" id="EventType">
-      <option value="option1">Option 1</option>
-      <option value="option2">Option 2</option>
-      <option value="option3">Option 3</option>
     </select>
 
     <label class="constraintLab">Event Start</label>

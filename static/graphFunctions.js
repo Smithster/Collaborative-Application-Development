@@ -27,3 +27,19 @@ const test = () => {
     console.log(error)
   });
 };
+
+const getEventTypes = () => {
+  fetch('/getEventTypes')
+  .then(response => response.json())
+  .then(eventTypes => {
+    eventTypes.forEach(eventType => {
+      eventTypeOption = document.createElement("option")
+      eventTypeOption.innerHTML = eventType
+      document.getElementById("EventType").appendChild(eventTypeOption)
+    });
+  }).catch((error) => {
+    console.log(error)
+  });
+}
+
+getEventTypes()
