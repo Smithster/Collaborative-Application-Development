@@ -1,3 +1,40 @@
+const warn = (msg) => {
+  document.getElementById('warnDiv').innerHTML = msg
+};
+
+const removeWarning = () => {
+  document.getElementById('warnDiv').innerHTML = ''
+};
+
+const checkError = () => {
+  FromDate = document.getElementById('FromDate').value
+  StartDate = document.getElementById('StartDate').value
+  StartBookings = document.getElementById('StartBookings').value
+
+  if (!(StartBookings < StartDate && FromDate < StartDate && FromDate >= StartBookings)){
+    return true
+  }
+
+  try {
+    bookings = Number(document.getElementById('GroupSize').value)
+  } catch (error) {
+    return true
+  }
+
+  if (bookings < 0) {
+    return true
+  }
+
+  eventType = document.getElementById('EventType').value
+  eventName = document.getElementById('EventName').value
+
+  if (eventType == null || eventName == null){
+    return true
+  }
+
+  return false
+};
+
 const test = () => {
   EventName = document.getElementById('EventName').value
   GroupSize = document.getElementById('GroupSize').value
@@ -16,6 +53,12 @@ const test = () => {
     'FromDate' : FromDate,
     'EventType' : eventType
   }
+
+  if (checkError()){
+    return warn('Invalid input. Please try again.')
+  }
+
+  removeWarning()
 
   fetch(`/prediction/${JSON.stringify(constraints)}`)
   .then(response => response.blob())
@@ -40,6 +83,6 @@ const getEventTypes = () => {
   }).catch((error) => {
     console.log(error)
   });
-}
+};
 
-getEventTypes()
+getEventTypes();
