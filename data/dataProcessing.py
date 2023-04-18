@@ -10,18 +10,17 @@ def initDatabase():
     con = sqlite3.connect('data/database.db')
 
     data1 = pd.DataFrame(data=pd.read_csv("data/ORG01-01082021-31072022.csv"))
-    data2 = pd.DataFrame(data=pd.read_csv("data/ORG02-24112017-25012023.csv"))
-    data3 = pd.DataFrame(data=pd.read_csv("data/ORG03-24112017-25012023.csv"))
     merged = pd.DataFrame(data=pd.read_csv("data/merged.csv"))
 
-    dataList = [data1, data2, data3, merged]
+    dataList = [data1, merged]
 
     for data in dataList:
         data.drop_duplicates(inplace=True)
+        data.EventType = data.EventType.fillna('Other Events')
+        data.EventType = data.EventType.str.strip()
+        data.EventType = data.EventType.str.replace('/', 'or')
 
     data1.to_sql('data1', con, if_exists='replace', index=False)
-    data2.to_sql('data2', con, if_exists='replace', index=False)
-    data3.to_sql('data3', con, if_exists='replace', index=False)
     merged.to_sql('merged', con, if_exists='replace', index=False)
     endTime = time.time()
     dTime = endTime - startTime

@@ -2,12 +2,9 @@ import time
 import pandas as pd
 from matplotlib.figure import Figure
 from matplotlib.axes import Axes
-import sklearn
 import data.dataProcessing as dataProcessing
 import xgboost as xgb
-from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
 
 #Limiting variables for results
 data = 'merged'
@@ -47,6 +44,7 @@ eventCumulativeData = pd.DataFrame()
 for event in events.index:
     eventInstance = data[data.EventId == event].iloc[0]
     eventStart = eventInstance['StartDate']
+
     eventType = eventTypes.loc[eventInstance['EventType'], 'TypeID']
     eventResample = data[data.EventId == event].resample(
         'D', on='StatusCreatedDate').agg({'GroupSize': sum})
@@ -84,17 +82,30 @@ print(
     f"Preprocessing Data Complete! Time Taken: {str(processingTime)} seconds.")
 
 
-def getGraph(dataList={}, title='', markers='.', lineStyle=''):
+def getGraph(dataList={},
+             title='',
+             markers='.',
+             lineStyle='',
+             xLabel='',
+             yLabel='',
+             legend=False):
     fig = Figure()
     ax = fig.add_subplot()
     for data in dataList:
-        ax.plot(dataList[data][0],
-                dataList[data][1],
-                label=data,
-                marker=markers,
-                ls=lineStyle)
+        ax.plot(
+            dataList[data][0],
+            dataList[data][1],
+            label=data,
+            marker=markers,
+            ls=lineStyle,
+        )
+        ax.locator_params(nbins=3)
+        ax.tick_params('x', labelrotation=25)
+        ax.set_xlabel(xLabel)
+        ax.set_ylabel(yLabel)
     ax.set_title(title)
-    ax.legend()
+    if legend:
+        ax.legend()
     return fig
 
 
@@ -138,6 +149,7 @@ def getTestData(constraints):
     testx['StatusCreatedYear'] = testx['StatusCreatedDate'].dt.year
     testx['StatusCreatedWeekday'] = testx['StatusCreatedDate'].dt.weekday
     testx['EventId'] = data.EventId.max() + 1
+    print(eventTypes, constraints['EventType'])
     testx['EventType'] = eventTypes.loc[constraints['EventType'], 'TypeID']
     testx['StartDay'] = constraints['StartDate'].day
     testx['StartMonth'] = constraints['StartDate'].month
@@ -165,13 +177,6 @@ def getPrediction(constraints):
     trainx, trainy = getTrainData(constraints)
     testx, x = getTestData(constraints)
 
-    # print("Encoding data for fitting...")
-    # encoder = LabelEncoder()
-    # for data in [trainx, testx]:
-    #     for column in data.columns:
-    #         data[column] = encoder.fit_transform(data[column])
-
-    # TODO might need this
     trainx, traintestx, trainy, traintesty = train_test_split(trainx,
                                                               trainy,
                                                               test_size=0.3,
@@ -221,7 +226,9 @@ def getPrediction(constraints):
         title=
         f'{constraints["EventName"]}, Cumulative bookings: {cumulativePrediction}',
         lineStyle='-',
-        markers='')
+        markers='',
+        xLabel='Date',
+        yLabel='Predicted bookings (for the day)')
 
 
 def getEventTypes():

@@ -4,14 +4,17 @@ import json
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib import pyplot as plt
 import data.analysis as analysis
+# import data.typePrediction as typePrediction
 import pandas as pd
 
 app = Flask(__name__)
+
 
 def convertFigure(graph):
     output = io.BytesIO()
     FigureCanvasAgg(graph).print_png(output)
     return Response(output.getvalue(), 'image/png')
+
 
 def formatConstraints(data):
     try:
@@ -22,15 +25,12 @@ def formatConstraints(data):
     except:
         print("Invalid Data Type")
     return data
-    
+
+
 @app.route('/')
 def index():
-  return render_template('graph.html')
+    return render_template('graph.html')
 
-@app.route('/getConstraints')
-def getConstraints():
-    constraints = analysis.getHeaders()
-    return Response(constraints, 'text/string')
 
 @app.route('/prediction/<data>')
 def getPrediction(data):
@@ -38,6 +38,7 @@ def getPrediction(data):
     constraints = formatConstraints(constraints)
     fig = analysis.getPrediction(constraints)
     return convertFigure(fig)
+
 
 @app.route('/getEventTypes')
 def getEventTypes():

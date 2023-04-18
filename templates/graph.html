@@ -10,22 +10,22 @@
 <body>
   <div class="container">
     <label class="constraintLab">Event Name</label>
-    <input type="text" class="constraintIn" id="EventName">
+    <input type="text" class="constraintIn" id="EventName" placeholder="Enter the event name">
 
     <label class="constraintLab">Event Type</label>
-    <select class="constraintIn" id="EventType">
+    <select class="constraintSelect" id="EventType">
     </select>
-
-    <label class="constraintLab">Event Start</label>
-    <input type="date" class="constraintIn" id="StartDate">
 
     <label class="constraintLab">Start of Bookings</label>
     <input type="date" class="constraintIn" id="StartBookings">
 
-    <label class="constraintLab">From Date (Current Date)</label>
+    <label class="constraintLab">Date to predict from</label>
     <input type="date" class="constraintIn" id="FromDate">
 
-    <label class="constraintLab">Number of bookings</label>
+    <label class="constraintLab">Day of the Event</label>
+    <input type="date" class="constraintIn" id="StartDate">
+
+    <label class="constraintLab">Number of bookings at the date predicting from</label>
     <input type="text" class="constraintIn" id="GroupSize">
 
     <div id="warnDiv"></div>

@@ -1,5 +1,7 @@
 body {
   background-color: #f7f7f7;
+  font-weight: bold;
+  color: #444;
 }
 
 .container {
@@ -14,8 +16,6 @@ body {
 .constraintLab {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
-  color: #444;
 }
 
 .constraintIn {
@@ -23,15 +23,31 @@ body {
   width: 100%;
   padding: 10px;
   border-radius: 5px;
-  border: none;
   margin-bottom: 10px;
   box-sizing: border-box;
   appearance: none; /* hide default dropdown arrow */
   -webkit-appearance: none;
   -moz-appearance: none;
-  background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 9l4 4 4-4z"/></svg>') no-repeat; /* add custom arrow */
-  background-size: 16px; /* size custom arrow */
-  background-position: right 10px center; /* position custom arrow */
+  font-weight: unset;
+}
+
+.constraintSelect {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  appearance: none;
+  /* hide default dropdown arrow */
+  /* -webkit-appearance: none;
+  -moz-appearance: none; */
+  /* background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8 9l4 4 4-4z"/></svg>') no-repeat; */
+  /* add custom arrow */
+  /* background-size: 16px; */
+  /* size custom arrow */
+  /* background-position: right 10px center; */
+  /* position custom arrow */
 }
 
 /* style the options */
