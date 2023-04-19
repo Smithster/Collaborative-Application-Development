@@ -40,6 +40,7 @@ data = data.drop([
 ],
                  axis=1)
 
+#Making a dataframe for cumulative data of events
 eventCumulativeData = pd.DataFrame()
 for event in events.index:
     eventInstance = data[data.EventId == event].iloc[0]
@@ -58,6 +59,7 @@ for event in events.index:
     eventResample = eventResample[eventResample.DaysToEvent >= 0]
     eventCumulativeData = pd.concat([eventCumulativeData, eventResample])
 
+# replacing dates with day, month, year and weekday values
 eventCumulativeData['StatusCreatedDay'] = eventCumulativeData[
     'StatusCreatedDate'].dt.day
 eventCumulativeData['StatusCreatedMonth'] = eventCumulativeData[
@@ -74,14 +76,16 @@ eventCumulativeData['StartWeekday'] = eventCumulativeData[
 eventCumulativeData.drop(['StartDate', 'StatusCreatedDate'],
                          axis=1,
                          inplace=True)
-print(eventCumulativeData.info())
 
+# this is just timing how long it takes for the server to start
 endTime = time.time()
 processingTime = endTime - startTime
 print(
     f"Preprocessing Data Complete! Time Taken: {str(processingTime)} seconds.")
 
 
+# function to produce graphs, created so that it
+# wouldn't have to be recoded every time we wanted a graph
 def getGraph(dataList={},
              title='',
              markers='.',
@@ -109,6 +113,7 @@ def getGraph(dataList={},
     return fig
 
 
+# Gets cumulative values for the events where the days to event is equal to the days to event from the user input
 def getSelectCumulative(constraints):
     cumData = eventCumulativeData.copy(deep=True)
     daysToEvent = (constraints['StartDate'] - constraints['FromDate']).days
@@ -127,6 +132,7 @@ def getSelectCumulative(constraints):
     return cumData
 
 
+#Gathers information from the data to train the regressor
 def getTrainData(constraints):
     trainData = getSelectCumulative(constraints)
     trainx = trainData[[
@@ -139,6 +145,7 @@ def getTrainData(constraints):
     return trainx, trainy
 
 
+# uses the constraints from the user to create the test data for predictions
 def getTestData(constraints):
     testx = pd.DataFrame()
     testx['StatusCreatedDate'] = pd.date_range(constraints['FromDate'],
@@ -169,6 +176,7 @@ def getTestData(constraints):
     return testx, graphx
 
 
+# call to start making a prediction, starts with gathering all required information
 def getPrediction(constraints):
     print(eventCumulativeData.info())
     startTime = time.time()
@@ -177,6 +185,7 @@ def getPrediction(constraints):
     trainx, trainy = getTrainData(constraints)
     testx, x = getTestData(constraints)
 
+    # seperating the data randomly to train the regressor
     trainx, traintestx, trainy, traintesty = train_test_split(trainx,
                                                               trainy,
                                                               test_size=0.3,
@@ -184,6 +193,7 @@ def getPrediction(constraints):
 
     print(trainy, traintesty)
 
+    # Create and fit the regressor model
     mod = xgb.XGBRegressor(base_score=0.5,
                            booster='gbtree',
                            n_estimators=1000,
@@ -198,12 +208,9 @@ def getPrediction(constraints):
             eval_set=[(trainx, trainy), (traintestx, traintesty)],
             verbose=100)
 
+    # Generate predictions using the test data
     print("Making predictions...")
     y = mod.predict(testx)
-
-    print(trainx.info(), trainy.info())
-
-    print('testx.info()', testx.info())
 
     #TODO or alternatively use this
     # mod = RandomForestRegressor(n_estimators=1000)
@@ -213,12 +220,12 @@ def getPrediction(constraints):
     # y = mod.predict(testx)
 
     groupSizePrediction = y
-    print(y.cumsum()[-1], constraints['GroupSize'])
     cumulativePrediction = int(y.cumsum()[-1]) + int(constraints['GroupSize'])
 
     endTime = time.time()
     print(f'Done! Time taken was {endTime - startTime} seconds.')
 
+    # finish by returning a graph to the web app
     return getGraph(
         dataList={
             'Predicted Bookings': [x, groupSizePrediction],
@@ -231,6 +238,7 @@ def getPrediction(constraints):
         yLabel='Predicted bookings (for the day)')
 
 
+# This is just used by the web app to gather event types for the select input
 def getEventTypes():
     eventTypesList = []
     for eventType in eventTypes.index:
