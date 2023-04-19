@@ -1,3 +1,4 @@
+// some functions to warn users of any issues (changes text in element as warning)
 const warn = (msg) => {
   document.getElementById('warnDiv').innerHTML = msg
 };
@@ -6,6 +7,7 @@ const removeWarning = () => {
   document.getElementById('warnDiv').innerHTML = ''
 };
 
+// checks for any errors or impossibilities in the user inputs
 const checkError = () => {
   FromDate = document.getElementById('FromDate').value
   StartDate = document.getElementById('StartDate').value
@@ -35,6 +37,8 @@ const checkError = () => {
   return false
 };
 
+// tries to gather the information for prediction, tests the inputs, and if they're ok, sends them to the server
+// to create a prediction
 const test = () => {
   EventName = document.getElementById('EventName').value
   GroupSize = document.getElementById('GroupSize').value
@@ -71,6 +75,8 @@ const test = () => {
   });
 };
 
+// Calls upon to server to return a list of possible event types to create options
+// for the user to input
 const getEventTypes = () => {
   fetch('/getEventTypes')
   .then(response => response.json())

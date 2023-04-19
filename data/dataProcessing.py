@@ -14,12 +14,14 @@ def initDatabase():
 
     dataList = [data1, merged]
 
+    # Data cleansing and pre-processing for event type column for useability from front end
     for data in dataList:
         data.drop_duplicates(inplace=True)
         data.EventType = data.EventType.fillna('Other Events')
         data.EventType = data.EventType.str.strip()
         data.EventType = data.EventType.str.replace('/', 'or')
 
+    # data gets stored in SQLite database
     data1.to_sql('data1', con, if_exists='replace', index=False)
     merged.to_sql('merged', con, if_exists='replace', index=False)
     endTime = time.time()
@@ -27,6 +29,7 @@ def initDatabase():
     print(f"Setting up data took {dTime} seconds")
 
 
+# when needed, data gets called from the database
 def getTable(index='data1'):
     con = sqlite3.connect('data/database.db')
     data = pd.read_sql(f'SELECT * FROM {index}', con, index_col=None)
