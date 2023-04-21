@@ -11,9 +11,9 @@ const removeWarning = () => {
 const checkError = () => {
   FromDate = document.getElementById('FromDate').value
   StartDate = document.getElementById('StartDate').value
-  StartBookings = document.getElementById('StartBookings').value
+  // StartBookings = document.getElementById('StartBookings').value
 
-  if (!(StartBookings < StartDate && FromDate < StartDate && FromDate >= StartBookings)){
+  if (!(FromDate < StartDate)){
     return true
   }
 
@@ -43,7 +43,7 @@ const test = () => {
   EventName = document.getElementById('EventName').value
   GroupSize = document.getElementById('GroupSize').value
   StartDate = document.getElementById('StartDate').value
-  StartBookings = document.getElementById('StartBookings').value
+  // StartBookings = document.getElementById('StartBookings').value
   FromDate = document.getElementById('FromDate').value
   eventType = document.getElementById('EventType').value
   
@@ -53,7 +53,7 @@ const test = () => {
     'EventName' : EventName,
     'GroupSize' : GroupSize,
     'StartDate' : StartDate,
-    'StartBookings' : StartBookings,
+    // 'StartBookings' : StartBookings,
     'FromDate' : FromDate,
     'EventType' : eventType
   }
